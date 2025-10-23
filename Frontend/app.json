@@ -1,6 +1,6 @@
 {
   "expo": {
-    "scheme": "nutriscan",
+    "scheme":"NutriScan",
     "name": "Frontend",
     "slug": "Frontend",
     "version": "1.0.0",

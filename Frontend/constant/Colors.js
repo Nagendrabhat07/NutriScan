@@ -1,4 +1,3 @@
-// constants/Colors.js
 
 export const Colors = {
   // General
@@ -12,7 +11,7 @@ export const Colors = {
   grayDark: "#616161",
 
   // Backgrounds
-  background: "#f0fef0ff",      // Main background
+  background: "#caebcaff",      // Main background
   cardBackground: "#F9F9F9",  // Card or container background
   modalBackground: "#FFFFFF",  // Modal background
 
