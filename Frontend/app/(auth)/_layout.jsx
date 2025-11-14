@@ -1,16 +1,16 @@
-import { StatusBar, StyleSheet, Text, View } from 'react-native'
-import React from 'react'
-import { Stack } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
+import { useAuth } from '@clerk/clerk-expo'
+import { useEffect } from 'react'
 
-const _lauout = () => {
-  return (
-    
-    <Stack 
-        screenOptions={{headerShown : false , animation : 'none'}}
-    />
-  )
+export default function AuthRoutesLayout() {
+  const { isSignedIn } = useAuth()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (isSignedIn) {
+      router.replace('/home') // Redirect to the home page
+    }
+  }, [isSignedIn])
+
+  return <Stack />
 }
-
-export default _lauout
-
-const styles = StyleSheet.create({})
