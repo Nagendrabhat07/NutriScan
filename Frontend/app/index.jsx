@@ -7,7 +7,7 @@ const index = () => {
   return (
     <View style = {styles.containe}>
       <Text>index</Text>
-      
+      <Link href="/wellcome" >Wellcome</Link>
       <Link href='/sign-in' >Wellcome</Link>
       <Link href='/home' >Profile</Link>
     </View>

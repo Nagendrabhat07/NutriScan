@@ -1,8 +1,12 @@
-// app/(auth)/sign-up.jsx
 import * as React from 'react'
 import { Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native'
 import { useSignUp } from '@clerk/clerk-expo'
-import { Link, useRouter } from 'expo-router'
+import { Link, useNavigation, useRouter } from 'expo-router'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { ArrowLeftIcon } from 'react-native-heroicons/outline';
+
+
+import { Colors } from '../../constant/Colors'
 
 function parseClerkError(err) {
   try {
@@ -18,6 +22,8 @@ function parseClerkError(err) {
 }
 
 export default function SignUpScreen() {
+  const navigation = useNavigation()
+
   const { isLoaded, signUp, setActive } = useSignUp()
   const router = useRouter()
 
@@ -140,47 +146,66 @@ export default function SignUpScreen() {
   }
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text style={{ fontSize: 22, marginBottom: 16 }}>Sign up</Text>
+    <View className="flex-1 bg-white" style={{backgroundColor:Colors.primary}}>
+        <SafeAreaView>
 
-      {errorMessage !== '' && <Text style={{ color: 'red', marginBottom: 12 }}>{errorMessage}</Text>}
+          {/* back button */}
+          <View className="flex-row justify-start">
+            <TouchableOpacity
+            onPress={()=>{navigation.goBack()}}
+              className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
+            >
+              <ArrowLeftIcon size="20" color="black"/>
+            </TouchableOpacity>
+          </View>
+          
+          <View>
+            
+          </View>
 
-      <TextInput
-        autoCapitalize="none"
-        value={emailAddress}
-        placeholder="Enter email"
-        onChangeText={(email) => setEmailAddress(email)}
-        keyboardType="email-address"
-        style={{ borderWidth: 1, borderColor: '#ddd', padding: 10, marginBottom: 12, borderRadius: 6 }}
-      />
-      <TextInput
-        value={password}
-        placeholder="Enter password"
-        secureTextEntry={true}
-        onChangeText={(p) => setPassword(p)}
-        style={{ borderWidth: 1, borderColor: '#ddd', padding: 10, marginBottom: 12, borderRadius: 6 }}
-      />
+          <View style={{ padding: 20 }}>
+            <Text style={{ fontSize: 22, marginBottom: 16 }}>Sign up</Text>
 
-      <TouchableOpacity
-        onPress={onSignUpPress}
-        disabled={loading}
-        style={{
-          backgroundColor: loading ? '#9fc3ff' : '#007AFF',
-          padding: 12,
-          alignItems: 'center',
-          borderRadius: 8,
-          marginBottom: 12,
-        }}
-      >
-        {loading ? <ActivityIndicator color="#fff" /> : <Text style={{ color: '#fff' }}>Continue</Text>}
-      </TouchableOpacity>
+            {errorMessage !== '' && <Text style={{ color: 'red', marginBottom: 12 }}>{errorMessage}</Text>}
 
-      <View style={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
-        <Text>Already have an account?</Text>
-        <Link href="/(auth)/sign-in">
-          <Text style={{ color: '#007AFF' }}>Sign in</Text>
-        </Link>
-      </View>
+            <TextInput
+              autoCapitalize="none"
+              value={emailAddress}
+              placeholder="Enter email"
+              onChangeText={(email) => setEmailAddress(email)}
+              keyboardType="email-address"
+              style={{ borderWidth: 1, borderColor: '#ddd', padding: 10, marginBottom: 12, borderRadius: 6 }}
+            />
+            <TextInput
+              value={password}
+              placeholder="Enter password"
+              secureTextEntry={true}
+              onChangeText={(p) => setPassword(p)}
+              style={{ borderWidth: 1, borderColor: '#ddd', padding: 10, marginBottom: 12, borderRadius: 6 }}
+            />
+
+            <TouchableOpacity
+              onPress={onSignUpPress}
+              disabled={loading}
+              style={{
+                backgroundColor: loading ? '#9fc3ff' : '#007AFF',
+                padding: 12,
+                alignItems: 'center',
+                borderRadius: 8,
+                marginBottom: 12,
+              }}
+            >
+              {loading ? <ActivityIndicator color="#fff" /> : <Text style={{ color: '#fff' }}>Continue</Text>}
+            </TouchableOpacity>
+
+            <View style={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
+              <Text>Already have an account?</Text>
+              <Link href="/(auth)/sign-in">
+                <Text style={{ color: '#007AFF' }}>Sign in</Text>
+              </Link>
+            </View>
+        </View>
+      </SafeAreaView>
     </View>
   )
 }

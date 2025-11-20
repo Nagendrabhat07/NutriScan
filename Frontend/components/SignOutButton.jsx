@@ -18,7 +18,7 @@ import { Text, TouchableOpacity } from 'react-native'
   }
   return (
     <TouchableOpacity onPress={handleSignOut}>
-      <Text>Sign out</Text>
+      <Text className="text-xl font-bold text-blue-500">Sign out</Text>
     </TouchableOpacity>
   )
 }
