@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native'
+import { Text, TextInput, TouchableOpacity, View, ActivityIndicator,Image } from 'react-native'
 import { useSignUp } from '@clerk/clerk-expo'
 import { Link, useNavigation, useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -158,13 +158,21 @@ export default function SignUpScreen() {
               <ArrowLeftIcon size="20" color="black"/>
             </TouchableOpacity>
           </View>
-          
-          <View>
-            
-          </View>
 
+          {/* Photo */}
+          <View className="flex-row justify-center">
+            <Image source={require('../../assets/Logo.png')}
+             style={{width:250,height:250}}
+            />
+          </View>
+      </SafeAreaView>
+
+      {/* sign up form */}
+      <View className="flex-1 bg-white px-8 pt-8"
+        style={{borderTopLeftRadius:50 , borderTopRightRadius:50}}
+      >
           <View style={{ padding: 20 }}>
-            <Text style={{ fontSize: 22, marginBottom: 16 }}>Sign up</Text>
+            <Text style={{ fontSize: 22, marginBottom: 16 }} className="text-red-700 font-bold ml-2">Sign up</Text>
 
             {errorMessage !== '' && <Text style={{ color: 'red', marginBottom: 12 }}>{errorMessage}</Text>}
 
@@ -174,14 +182,16 @@ export default function SignUpScreen() {
               placeholder="Enter email"
               onChangeText={(email) => setEmailAddress(email)}
               keyboardType="email-address"
-              style={{ borderWidth: 1, borderColor: '#ddd', padding: 10, marginBottom: 12, borderRadius: 6 }}
+              style={{ borderWidth: 1, borderColor: '#ddd',  marginBottom: 12,}}
+              className="p-5 bg-gray-100 text-gray-700 rounded-2xl"
             />
             <TextInput
               value={password}
               placeholder="Enter password"
               secureTextEntry={true}
               onChangeText={(p) => setPassword(p)}
-              style={{ borderWidth: 1, borderColor: '#ddd', padding: 10, marginBottom: 12, borderRadius: 6 }}
+              style={{ borderWidth: 1, borderColor: '#ddd', marginBottom: 12, }}
+              className="p-5 bg-gray-100 text-gray-700 rounded-2xl"
             />
 
             <TouchableOpacity
@@ -205,7 +215,9 @@ export default function SignUpScreen() {
               </Link>
             </View>
         </View>
-      </SafeAreaView>
+      </View>
     </View>
+          
+      
   )
 }
