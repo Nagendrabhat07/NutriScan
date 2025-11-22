@@ -1,10 +1,10 @@
+
 import * as React from 'react'
-import { Text, TextInput, TouchableOpacity, View, ActivityIndicator,Image } from 'react-native'
+import { Text, TextInput, TouchableOpacity, View, ActivityIndicator, Image } from 'react-native'
 import { useSignUp } from '@clerk/clerk-expo'
 import { Link, useNavigation, useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { ArrowLeftIcon } from 'react-native-heroicons/outline';
-
 
 import { Colors } from '../../constant/Colors'
 
@@ -26,7 +26,8 @@ export default function SignUpScreen() {
 
   const { isLoaded, signUp, setActive } = useSignUp()
   const router = useRouter()
-
+  //This are states broooooo
+  const [username, setUsername] = React.useState('')             
   const [emailAddress, setEmailAddress] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [pendingVerification, setPendingVerification] = React.useState(false)
@@ -35,8 +36,17 @@ export default function SignUpScreen() {
   const [loading, setLoading] = React.useState(false)
   const [verifyLoading, setVerifyLoading] = React.useState(false)
 
-  // basic client-side validation (adjust to your policy)
+  // Basic username validation 
+  const usernameIsValid = (u) => {
+    if (!u) return false
+    const re = /^[a-z0-9._-]{3,24}$/
+    return re.test(u)
+  }
+
+  // basic client-side validation
   const validate = () => {
+    if (!username) return 'Please choose a username'           
+    if (!usernameIsValid(username)) return 'Username invalid — use 3-24 lowercase letters, numbers or ._-'
     if (!emailAddress) return 'Please enter your email'
     if (!password) return 'Please enter a password'
     if (password.length < 6) return 'Password must be at least 6 characters'
@@ -59,13 +69,15 @@ export default function SignUpScreen() {
     }
 
     setLoading(true)
+    //creats account
     try {
       await signUp.create({
         emailAddress,
         password,
+        username,              
       })
 
-      // Send user an email with verification code (Clerk)
+      // Send user an email with verification code 
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
 
       // show OTP input
@@ -98,7 +110,9 @@ export default function SignUpScreen() {
       })
 
       if (signUpAttempt.status === 'complete') {
+        // signUpAttempt.createdSessionId is required to set active session
         await setActive({ session: signUpAttempt.createdSessionId })
+
         router.replace('/') // redirect to home
       } else {
         setErrorMessage('Verification not complete. Please try again or request a new code.')
@@ -176,6 +190,17 @@ export default function SignUpScreen() {
 
             {errorMessage !== '' && <Text style={{ color: 'red', marginBottom: 12 }}>{errorMessage}</Text>}
 
+            {/* Username */}
+            <TextInput
+              autoCapitalize="none"
+              value={username}
+              placeholder="Choose a username (3-24 chars)"
+              onChangeText={(u) => setUsername(u)}
+              style={{ borderWidth: 1, borderColor: '#ddd', marginBottom: 12 }}
+              className="p-5 bg-gray-100 text-gray-700 rounded-2xl"
+            />
+            
+            {/* Email */}
             <TextInput
               autoCapitalize="none"
               value={emailAddress}
@@ -185,6 +210,8 @@ export default function SignUpScreen() {
               style={{ borderWidth: 1, borderColor: '#ddd',  marginBottom: 12,}}
               className="p-5 bg-gray-100 text-gray-700 rounded-2xl"
             />
+
+            {/* Password */}
             <TextInput
               value={password}
               placeholder="Enter password"
@@ -217,7 +244,5 @@ export default function SignUpScreen() {
         </View>
       </View>
     </View>
-          
-      
   )
 }

@@ -1,61 +1,123 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, Dimensions } from 'react-native'
-import React from 'react'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { useNavigation } from 'expo-router';
 
+import {View,Text,Image,TouchableOpacity,Dimensions,Platform,StatusBar,ScrollView,StyleSheet,} from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { LinearGradient } from "expo-linear-gradient";
+import { useNavigation } from "expo-router";
 
-const Wellcome = () => {
-  const { height } = Dimensions.get("window");
-  const navigation = useNavigation()
- 
-  const LOGO_SIZE = height * 0.55; 
+export default function WellcomeTailwind() {
+  const navigation = useNavigation();
+  const { width, height } = Dimensions.get("window");
+
+  // Card constraints 
+  const CARD_MAX_WIDTH = Math.min(width * 0.94, 760);
+  const CARD_MAX_HEIGHT = Math.min(height * 0.82, 1000);
+
+  // Logo
+  const LOGO_SIZE = Math.round(Math.min(CARD_MAX_WIDTH * 0.7, CARD_MAX_HEIGHT * 0.45));
 
   return (
-    <SafeAreaView className="flex-1 bg-[#d2f5d2] items-center justify-start pt-10">
-
-    <Text className="text-4xl font-extrabold text-gray-900 mt-6"
-        style={{ textShadowColor: 'rgba(0,0,0,0.25)', textShadowRadius: 4 }}>
-       Let’s <Text className="text-yellow-500">Get Started</Text>
-      </Text>
-
+    <SafeAreaView
+      className="flex-1"
       
-      <View className="mt-6 items-center">
-        <Image
-          source={require("../../assets/Logo.png")}
-          style={{ width: LOGO_SIZE, height: LOGO_SIZE }}
-          className="mb-2"
-          resizeMode="contain"
-        />
-      </View>
-
-      
-      <Text className="text-gray-700 text-lg mt-2">
-        Scan, Track, Eat Smarter
-      </Text>
-
-      
-      <TouchableOpacity
-        activeOpacity={0.8}
-        className="bg-yellow-400 w-4/5 py-3 rounded-xl mt-10 shadow-lg"
-        onPress={()=>{navigation.navigate("sign-up")}}
+    >
+      <LinearGradient
+        colors={["#d8fcd8", "#ffffff"]}
+        start={{ x: 0, y: 0 }}
+        end={{ x: 0, y: 1 }}
+        className="flex-1 items-center justify-start"
       >
-        <Text className="text-xl font-bold text-center text-gray-800">
-          Sign Up
-        </Text>
-      </TouchableOpacity>
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          contentContainerStyle={{ width: "100%", alignItems: "center", paddingVertical: 20, paddingHorizontal: 12 }}
+        >
+          
+            
 
-      
-      <View className="flex-row justify-center mt-4">
-        <Text className="font-semibold text-gray-800">Already have an account?</Text>
-        <TouchableOpacity onPress={()=>{navigation.navigate("sign-in")}}>
-          <Text className="font-semibold text-yellow-500"> Sign In</Text>
-        </TouchableOpacity>
-      </View>
+          {/* Glass Card*/}
+          <View
+            className="rounded-3xl items-center bg-white/80 p-7"
+            style={{
+              width: CARD_MAX_WIDTH,
+              maxHeight: CARD_MAX_HEIGHT,
+              // shadow
+              elevation: 6,
+              shadowColor: "#000",
+              shadowOpacity: 0.06,
+              shadowRadius: 12,
+              shadowOffset: { width: 0, height: 6 },
+              marginTop:80
+            }}
+          >
+            {/* Spacer */}
+            <View className="h-2" />
 
+            {/* Logo */}
+            <View className="items-center my-3">
+              <Image
+                source={require("../../assets/Logo.png")}
+                style={{ width: LOGO_SIZE, height: LOGO_SIZE }}
+                resizeMode="contain"
+                className="mb-3"
+              />
+            </View>
+
+            {/* Heading */}
+            <Text className="text-[34px] font-extrabold text-[#15803d] text-center leading-9">
+              Let’s <Text className="text-[#F59E0B]">Get Started</Text>
+            </Text>
+
+            {/* Tagline */}
+            <Text className="text-gray-500 text-base text-center mt-2 mb-4">
+              Scan, Track, Eat Smarter
+            </Text>
+
+            {/* Flexible spacer to push CTA toward bottom of card */}
+            <View style={{ flexGrow: 1 }} />
+
+            {/* Button */}
+            <TouchableOpacity
+              activeOpacity={0.9}
+              onPress={() => navigation.navigate("sign-up")}
+              className="w-4/5 items-center py-3 rounded-xl"
+              style={{
+                backgroundColor: "#F59E0B",
+                elevation: 4,
+                shadowColor: "#F59E0B",
+                shadowOpacity: 0.2,
+                shadowRadius: 8,
+                shadowOffset: { width: 0, height: 6 },
+              }}
+            >
+              <Text className="text-gray-800 font-extrabold text-lg">Sign Up</Text>
+            </TouchableOpacity>
+
+            {/* Sign in */}
+            <View className="flex-row items-center mt-4">
+              <Text className="text-black font-semibold">Already have an account?</Text>
+              <TouchableOpacity onPress={() => navigation.navigate("sign-in")}>
+                <Text className="text-[#F59E0B] font-semibold"> Sign In</Text>
+              </TouchableOpacity>
+            </View>
+            {/* round Background */}
+            <View
+            style={{
+              position:"absolute",
+              top: 80,
+              width:LOGO_SIZE*1.4,
+              height:LOGO_SIZE*1.4,
+              borderRadius:(LOGO_SIZE*1.8)/2,
+              backgroundColor:"#4EE39A",
+              opacity:0.08,
+              
+            }}
+          />
+          </View>
+          
+        </ScrollView>
+        
+      </LinearGradient>
     </SafeAreaView>
   );
-};
-
-export default Wellcome;
+}
 
 const styles = StyleSheet.create({});
