@@ -8,17 +8,16 @@ import { Text, TouchableOpacity } from 'react-native'
   const handleSignOut = async () => {
     try {
       await signOut()
-      // Redirect to your desired page
-      Linking.openURL(Linking.createURL('/sign-in'))
+      // back to wellcome page
+      Linking.openURL(Linking.createURL('/wellcome'))
     } catch (err) {
-      // See https://clerk.com/docs/custom-flows/error-handling
-      // for more info on error handling
+
       console.error(JSON.stringify(err, null, 2))
     }
   }
   return (
     <TouchableOpacity onPress={handleSignOut}>
-      <Text>Sign out</Text>
+      <Text className="text-xl font-bold text-blue-500">Sign out</Text>
     </TouchableOpacity>
   )
 }

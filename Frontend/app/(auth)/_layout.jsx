@@ -12,5 +12,9 @@ export default function AuthRoutesLayout() {
     }
   }, [isSignedIn])
 
-  return <Stack />
+  return <Stack
+  screenOptions={{
+    headerShown : false
+  }}
+  />
 }

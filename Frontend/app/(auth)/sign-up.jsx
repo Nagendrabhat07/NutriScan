@@ -1,8 +1,12 @@
-// app/(auth)/sign-up.jsx
+
 import * as React from 'react'
-import { Text, TextInput, TouchableOpacity, View, ActivityIndicator } from 'react-native'
+import { Text, TextInput, TouchableOpacity, View, ActivityIndicator, Image } from 'react-native'
 import { useSignUp } from '@clerk/clerk-expo'
-import { Link, useRouter } from 'expo-router'
+import { Link, useNavigation, useRouter } from 'expo-router'
+import { SafeAreaView } from 'react-native-safe-area-context'
+import { ArrowLeftIcon } from 'react-native-heroicons/outline';
+
+import { Colors } from '../../constant/Colors'
 
 function parseClerkError(err) {
   try {
@@ -18,9 +22,12 @@ function parseClerkError(err) {
 }
 
 export default function SignUpScreen() {
+  const navigation = useNavigation()
+
   const { isLoaded, signUp, setActive } = useSignUp()
   const router = useRouter()
-
+  //This are states broooooo
+  const [username, setUsername] = React.useState('')             
   const [emailAddress, setEmailAddress] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [pendingVerification, setPendingVerification] = React.useState(false)
@@ -29,8 +36,17 @@ export default function SignUpScreen() {
   const [loading, setLoading] = React.useState(false)
   const [verifyLoading, setVerifyLoading] = React.useState(false)
 
-  // basic client-side validation (adjust to your policy)
+  // Basic username validation 
+  const usernameIsValid = (u) => {
+    if (!u) return false
+    const re = /^[a-z0-9._-]{3,24}$/
+    return re.test(u)
+  }
+
+  // basic client-side validation
   const validate = () => {
+    if (!username) return 'Please choose a username'           
+    if (!usernameIsValid(username)) return 'Username invalid — use 3-24 lowercase letters, numbers or ._-'
     if (!emailAddress) return 'Please enter your email'
     if (!password) return 'Please enter a password'
     if (password.length < 6) return 'Password must be at least 6 characters'
@@ -53,13 +69,15 @@ export default function SignUpScreen() {
     }
 
     setLoading(true)
+    //creats account
     try {
       await signUp.create({
         emailAddress,
         password,
+        username,              
       })
 
-      // Send user an email with verification code (Clerk)
+      // Send user an email with verification code 
       await signUp.prepareEmailAddressVerification({ strategy: 'email_code' })
 
       // show OTP input
@@ -92,7 +110,9 @@ export default function SignUpScreen() {
       })
 
       if (signUpAttempt.status === 'complete') {
+        // signUpAttempt.createdSessionId is required to set active session
         await setActive({ session: signUpAttempt.createdSessionId })
+
         router.replace('/') // redirect to home
       } else {
         setErrorMessage('Verification not complete. Please try again or request a new code.')
@@ -140,46 +160,88 @@ export default function SignUpScreen() {
   }
 
   return (
-    <View style={{ padding: 20 }}>
-      <Text style={{ fontSize: 22, marginBottom: 16 }}>Sign up</Text>
+    <View className="flex-1 bg-white" style={{backgroundColor:Colors.primary}}>
+        <SafeAreaView>
 
-      {errorMessage !== '' && <Text style={{ color: 'red', marginBottom: 12 }}>{errorMessage}</Text>}
+          {/* back button */}
+          <View className="flex-row justify-start">
+            <TouchableOpacity
+            onPress={()=>{navigation.goBack()}}
+              className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
+            >
+              <ArrowLeftIcon size="20" color="black"/>
+            </TouchableOpacity>
+          </View>
 
-      <TextInput
-        autoCapitalize="none"
-        value={emailAddress}
-        placeholder="Enter email"
-        onChangeText={(email) => setEmailAddress(email)}
-        keyboardType="email-address"
-        style={{ borderWidth: 1, borderColor: '#ddd', padding: 10, marginBottom: 12, borderRadius: 6 }}
-      />
-      <TextInput
-        value={password}
-        placeholder="Enter password"
-        secureTextEntry={true}
-        onChangeText={(p) => setPassword(p)}
-        style={{ borderWidth: 1, borderColor: '#ddd', padding: 10, marginBottom: 12, borderRadius: 6 }}
-      />
+          {/* Photo */}
+          <View className="flex-row justify-center">
+            <Image source={require('../../assets/Logo.png')}
+             style={{width:250,height:250}}
+            />
+          </View>
+      </SafeAreaView>
 
-      <TouchableOpacity
-        onPress={onSignUpPress}
-        disabled={loading}
-        style={{
-          backgroundColor: loading ? '#9fc3ff' : '#007AFF',
-          padding: 12,
-          alignItems: 'center',
-          borderRadius: 8,
-          marginBottom: 12,
-        }}
+      {/* sign up form */}
+      <View className="flex-1 bg-white px-8 pt-8"
+        style={{borderTopLeftRadius:50 , borderTopRightRadius:50}}
       >
-        {loading ? <ActivityIndicator color="#fff" /> : <Text style={{ color: '#fff' }}>Continue</Text>}
-      </TouchableOpacity>
+          <View style={{ padding: 20 }}>
+            <Text style={{ fontSize: 22, marginBottom: 16 }} className="text-red-700 font-bold ml-2">Sign up</Text>
 
-      <View style={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
-        <Text>Already have an account?</Text>
-        <Link href="/(auth)/sign-in">
-          <Text style={{ color: '#007AFF' }}>Sign in</Text>
-        </Link>
+            {errorMessage !== '' && <Text style={{ color: 'red', marginBottom: 12 }}>{errorMessage}</Text>}
+
+            {/* Username */}
+            <TextInput
+              autoCapitalize="none"
+              value={username}
+              placeholder="Choose a username (3-24 chars)"
+              onChangeText={(u) => setUsername(u)}
+              style={{ borderWidth: 1, borderColor: '#ddd', marginBottom: 12 }}
+              className="p-5 bg-gray-100 text-gray-700 rounded-2xl"
+            />
+            
+            {/* Email */}
+            <TextInput
+              autoCapitalize="none"
+              value={emailAddress}
+              placeholder="Enter email"
+              onChangeText={(email) => setEmailAddress(email)}
+              keyboardType="email-address"
+              style={{ borderWidth: 1, borderColor: '#ddd',  marginBottom: 12,}}
+              className="p-5 bg-gray-100 text-gray-700 rounded-2xl"
+            />
+
+            {/* Password */}
+            <TextInput
+              value={password}
+              placeholder="Enter password"
+              secureTextEntry={true}
+              onChangeText={(p) => setPassword(p)}
+              style={{ borderWidth: 1, borderColor: '#ddd', marginBottom: 12, }}
+              className="p-5 bg-gray-100 text-gray-700 rounded-2xl"
+            />
+
+            <TouchableOpacity
+              onPress={onSignUpPress}
+              disabled={loading}
+              style={{
+                backgroundColor: loading ? '#9fc3ff' : '#007AFF',
+                padding: 12,
+                alignItems: 'center',
+                borderRadius: 8,
+                marginBottom: 12,
+              }}
+            >
+              {loading ? <ActivityIndicator color="#fff" /> : <Text style={{ color: '#fff' }}>Continue</Text>}
+            </TouchableOpacity>
+
+            <View style={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
+              <Text>Already have an account?</Text>
+              <Link href="/(auth)/sign-in">
+                <Text style={{ color: '#007AFF' }}>Sign in</Text>
+              </Link>
+            </View>
+        </View>
       </View>
     </View>
   )

@@ -1,6 +1,6 @@
 
 import { StyleSheet, Text, View } from 'react-native'
-
+import '../global.css'
 import { Stack } from 'expo-router'
 import { ClerkProvider } from '@clerk/clerk-expo'
 import { tokenCache } from '@clerk/clerk-expo/token-cache'
