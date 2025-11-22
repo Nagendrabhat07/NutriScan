@@ -102,7 +102,7 @@ export default function WellcomeTailwind() {
             <View
             style={{
               position:"absolute",
-              top: 80,
+              top: 20,
               width:LOGO_SIZE*1.4,
               height:LOGO_SIZE*1.4,
               borderRadius:(LOGO_SIZE*1.8)/2,
