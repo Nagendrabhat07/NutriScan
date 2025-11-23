@@ -1,7 +1,7 @@
 import { useAuth } from "@clerk/clerk-expo";
 
 // ⚠️ change this to your PC IP
-const API_URL = "http://192.168.1.12:5000/api/allergies";
+const API_URL = "http://192.168.29.109:5000/api/allergies";
 
 
 export function useAllergyAPI() {
