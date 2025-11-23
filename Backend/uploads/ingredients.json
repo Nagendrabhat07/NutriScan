@@ -1,0 +1,92 @@
+[
+  {
+    "name": "Monosodium Glutamate",
+    "category": "Flavor Enhancer",
+    "explanation": "Also known as MSG or Ajinomoto; may cause headaches, flushing, or discomfort in sensitive individuals and is linked in some research to metabolic and neurological concerns when heavily consumed."
+  },
+  {
+    "name": "MSG",
+    "category": "Flavor Enhancer",
+    "explanation": "Common abbreviation for Monosodium Glutamate, used widely in packaged soups, noodles, and snacks with similar potential adverse reactions in sensitive people."
+  },
+  {
+    "name": "Ajinomoto",
+    "category": "Flavor Enhancer",
+    "explanation": "Brand name often used generically for MSG in India, associated with the same possible symptoms such as headaches and flushing in some individuals."
+  },
+  {
+    "name": "High Fructose Corn Syrup",
+    "category": "Added Sugar",
+    "explanation": "A liquid sweetener that can promote obesity, insulin resistance, and fatty liver disease when consumed in excess."
+  },
+  {
+    "name": "HFCS",
+    "category": "Added Sugar",
+    "explanation": "Abbreviation for High Fructose Corn Syrup, frequently used in sweetened drinks and processed foods."
+  },
+  {
+    "name": "Aspartame",
+    "category": "Artificial Sweetener",
+    "explanation": "A low‑calorie sweetener whose safety is debated; some studies and case reports link it with headaches and possible metabolic effects in certain people."
+  },
+  {
+    "name": "Sodium Nitrite",
+    "category": "Preservative",
+    "explanation": "Curing salt for meats that can form potentially carcinogenic nitrosamines when exposed to high heat."
+  },
+  {
+    "name": "Sodium Nitrate",
+    "category": "Preservative",
+    "explanation": "Related compound used in processed meats that can also contribute to nitrosamine formation under certain conditions."
+  },
+  {
+    "name": "BHA",
+    "category": "Antioxidant Preservative",
+    "explanation": "Butylated hydroxyanisole; used to prevent fats from going rancid and has been flagged by some authorities as a possible carcinogen."
+  },
+  {
+    "name": "BHT",
+    "category": "Antioxidant Preservative",
+    "explanation": "Butylated hydroxytoluene; an anti‑oxidant preservative with concerns about endocrine disruption and long‑term safety at high intakes."
+  },
+  {
+    "name": "Potassium Bromate",
+    "category": "Flour Improver",
+    "explanation": "A dough conditioner for bread and buns that is classified as a possible carcinogen and has been banned in several countries."
+  },
+  {
+    "name": "Artificial Colors (Tartrazine, Sunset Yellow, Red 3)",
+    "category": "Artificial Coloring",
+    "explanation": "Synthetic food dyes associated with allergic reactions and hyperactivity in some children."
+  },
+  {
+    "name": "Red 40",
+    "category": "Artificial Coloring",
+    "explanation": "A widely used synthetic red dye linked in some studies to hyperactivity and behavioral issues in susceptible children."
+  },
+  {
+    "name": "Carrageenan",
+    "category": "Thickener/Emulsifier",
+    "explanation": "A seaweed‑derived additive used for texture that has been associated with digestive discomfort and intestinal inflammation in some experimental studies."
+  },
+  {
+    "name": "Propylparaben",
+    "category": "Preservative",
+    "explanation": "A paraben‑class preservative with concerns about endocrine disruption and possible effects on fertility in animal studies."
+  },
+  {
+    "name": "Sulphites (Sulfur Dioxide, Sodium Metabisulfite)",
+    "category": "Preservative",
+    "explanation": "Used to prevent browning and spoilage; can trigger asthma attacks and allergic‑type reactions in sensitive individuals."
+  },
+  {
+    "name": "Refined Vegetable Oils with Trans Fats",
+    "category": "Fat/Oil",
+    "explanation": "Oils that contain industrial trans fats, which raise LDL cholesterol, lower HDL, and strongly increase the risk of heart disease."
+  },
+  {
+    "name": "Aluminum Additives",
+    "category": "Leavening/Processing Aid",
+    "explanation": "Aluminum‑based compounds in baking powder and processed cheese that raise concerns about neurotoxicity and long‑term safety at high exposure."
+  }
+]
