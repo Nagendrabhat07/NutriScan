@@ -6,7 +6,7 @@ const API_URL = "http://192.168.1.12:5000/api/allergies";
 
 export function useAllergyAPI() {
   const { getToken } = useAuth();
-
+ 
   const getAllergies = async () => {
     const token = await getToken();
     const res = await fetch(API_URL, {
