@@ -55,34 +55,21 @@ const upload = multer({ storage: storage });
 
 
 // THE API ENDPOINT
-app.post('/api/ocr', upload.single('image'), async (req, res) => {
-  console.log("Received image for OCR...");
-
+app.post('/api/ocr', upload.single('file'), async (req, res) => {
+  if (!worker) {
+    return res.status(503).json({ error: 'OCR engine not ready' });
+  }
+  if (!req.file) {
+    console.log("No file received");
+    return res.status(400).json({ error: 'No file uploaded' });
+  }
   try {
-    if (!req.file) {
-      return res.status(400).json({ error: 'No image file provided' });
-    }
-
-    const imagePath = req.file.path;
-
-    const { data: { text } } = await Tesseract.recognize(
-      imagePath,
-      'eng',
-      { logger: m => console.log(m) }
-    );
-
-    console.log("OCR Result:", text);
-
-    fs.unlinkSync(imagePath);
-
-    res.json({ 
-      status: 'success', 
-      extractedText: text 
-    });
-
+    const { data: { text } } = await worker.recognize(req.file.buffer);
+    const results = analyzeText(text);
+    res.json({ status: 'success', data: results });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: 'OCR failed' });
+    console.error('OCR error:', error);
+    res.status(500).json({ error: 'Analysis failed on server.' });
   }
 });
 
@@ -115,39 +102,5 @@ function analyzeText(text) {
 
   return { extractedText: text, flaggedIngredients: flagged };
 }
-
-
-// 5. The API Endpoint
-// Note: Matches the URL in your React Native app: /api/ocr
-app.post('/api/ocr', upload.single('file'), async (req, res) => {
-  console.log("📸 Received image scan request...");
-
-  if (!req.file) {
-    console.log("❌ No file found in request");
-    return res.status(400).json({ status: 'error', message: 'No file uploaded.' });
-  }
-
-  try {
-    // A. Run OCR (Image -> Text)
-    console.log("   Running OCR...");
-    const { data: { text } } = await worker.recognize(req.file.buffer);
-    console.log("   OCR Complete. Found text length:", text.length);
-
-    // B. Run Analysis (Text -> Flagged Ingredients)
-    const results = analyzeText(text);
-    console.log("   Analysis Complete. Flagged items:", results.flaggedIngredients.length);
-
-    // C. Send Response
-    res.json({ 
-      status: 'success', 
-      data: results 
-    });
-
-  } catch (error) {
-    console.error('❌ Error during processing:', error);
-    res.status(500).json({ status: 'error', message: 'Analysis failed on server.' });
-  }
-});
-
 
 
