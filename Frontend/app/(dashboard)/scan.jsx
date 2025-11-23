@@ -1,21 +1,29 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, BackHandler } from "react-native";
+import { StyleSheet, Text, View, Image, TouchableOpacity, BackHandler, ScrollView } from "react-native"; 
 import { CameraView, useCameraPermissions } from "expo-camera";
 import * as ImagePicker from "expo-image-picker";
+import * as ImageManipulator from 'expo-image-manipulator'; 
 import { Ionicons } from "@expo/vector-icons";
 import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "expo-router";
+import axios from 'axios';
 
+// --- CLOUDINARY CONFIG ---
 const CLOUD_NAME = "dg9nqs3ng"; 
 const UPLOAD_PRESET = "nutriscan_uploads"; 
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
+
+// --- LOCAL SERVER CONFIG (REPLACE IP IF NEEDED) ---
+const SERVER_URL = 'http://192.168.29.109:3000/api/ocr'; 
 
 const Scan = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const [cameraOpen, setCameraOpen] = useState(false);
   const [photo, setPhoto] = useState(null);              
   const [uploading, setUploading] = useState(false);     
-  const [uploadProgress, setUploadProgress] = useState(0);
-  const [uploadedUrl, setUploadedUrl] = useState(null);  
+  
+  // Results State
+  const [ocrResult, setOcrResult] = useState(null);   // Local OCR Result
+  const [uploadedUrl, setUploadedUrl] = useState(null); // Cloudinary URL
 
   const cameraRef = useRef(null);
   const router = useRouter();
@@ -32,6 +40,7 @@ const Scan = () => {
     const backAction = () => {
       if (photo) {
         setPhoto(null);
+        setOcrResult(null);
         setUploadedUrl(null);
         return true;
       } else if (cameraOpen) {
@@ -47,74 +56,109 @@ const Scan = () => {
     return () => backHandler.remove();
   }, [photo, cameraOpen]);
 
+  // --- OPTIMIZATION FUNCTION ---
+  const processImage = async (uri) => {
+    console.log("Optimizing image...");
+    try {
+      const manipulatedResult = await ImageManipulator.manipulateAsync(
+        uri,
+        [{ resize: { width: 800 } }], 
+        { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+      );
+      
+      setPhoto(manipulatedResult.uri); 
+      setOcrResult(null); 
+      setUploadedUrl(null);
+    } catch (error) {
+      console.error("Error optimizing:", error);
+      alert("Could not process image");
+    }
+  };
+
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true, 
       quality: 1,
     });
     if (!result.canceled) {
-      setPhoto(result.assets[0].uri);
-      setUploadedUrl(null); 
+      processImage(result.assets[0].uri); 
     }
   };
 
   const takePhoto = async (camera) => {
     if (camera) {
       const pic = await camera.takePictureAsync();
-      setPhoto(pic.uri);
       setCameraOpen(false);
-      setUploadedUrl(null);
+      processImage(pic.uri); 
     }
   };
 
-  //Upload local image uri -> Cloudinary
-  const uploadToCloudinary = async () => {
-  if (!photo) return;
+  // --- MAIN FUNCTION: UPLOADS TO BOTH CLOUDINARY & LOCAL SERVER ---
+  const scanIngredients = async () => {
+    if (!photo) return;
 
-  try {
-    setUploading(true);
-    setUploadProgress(0);
-    setUploadedUrl(null);
+    try {
+      setUploading(true);
+      setOcrResult(null);
+      setUploadedUrl(null);
 
-    const formData = new FormData();
+      // 1. Prepare Data for Cloudinary
+      const cloudFormData = new FormData();
+      cloudFormData.append("file", {
+        uri: photo,
+        type: "image/jpeg",
+        name: "scan.jpg",
+      });
+      cloudFormData.append("upload_preset", UPLOAD_PRESET);
 
-    // format change
-    formData.append("file", {
-      uri: photo,
-      type: "image/jpeg",       
-      name: "scan.jpg",    
-    });
+      // 2. Prepare Data for Local Server
+      const localFormData = new FormData();
+      localFormData.append("file", {
+        uri: photo,
+        type: "image/jpeg",       
+        name: "scan.jpg",    
+      });
 
-    formData.append("upload_preset", UPLOAD_PRESET);
+      console.log("Starting simultaneous uploads...");
 
-    const res = await fetch(`https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`, {
-      method: "POST",
-      body: formData,
-    });
+      // 3. EXECUTE BOTH REQUESTS AT THE SAME TIME (Parallel)
+      const [cloudResponse, localResponse] = await Promise.all([
+        // A. Cloudinary Fetch
+        fetch(CLOUDINARY_URL, {
+          method: "POST",
+          body: cloudFormData,
+        }).then(res => res.json()),
 
-    const data = await res.json();
-    console.log("Cloudinary response:", data);
+        // B. Local Server Axios
+        axios.post(SERVER_URL, localFormData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+          timeout: 15000 // 15 sec timeout
+        })
+      ]);
 
-    if (!res.ok) {
-      // error message
-      throw new Error(data?.error?.message || "Upload failed");
+      // 4. Handle Cloudinary Result
+      console.log("Cloudinary Result:", cloudResponse);
+      if (cloudResponse.secure_url) {
+        setUploadedUrl(cloudResponse.secure_url);
+      }
+
+      // 5. Handle Local Server Result
+      console.log("Local Server Result:", localResponse.data);
+      if (localResponse.data.status === 'success') {
+        setOcrResult(localResponse.data.data); 
+      } else {
+        alert("Server Error: " + localResponse.data.message);
+      }
+
+    } catch (err) {
+      console.error("Upload error:", err);
+      alert("Error: Check your connection or server status.");
+    } finally {
+      setUploading(false);
     }
-
-    if (data.secure_url) {
-      setUploadedUrl(data.secure_url);
-      setUploadProgress(100);
-    } else {
-      alert("Upload succeeded, but no URL returned. Check console.");
-    }
-  } catch (err) {
-    console.error("Cloudinary upload error:", err);
-    alert(err.message || "Upload failed. Check console logs.");
-  } finally {
-    setUploading(false);
-  }
-};
+  };
  
-
 
   if (!permission) return <View />;
   if (!permission.granted) {
@@ -144,7 +188,7 @@ const Scan = () => {
           </View>
         </>
       ) : (
-        <View style={styles.content}>
+        <ScrollView contentContainerStyle={styles.content}>
           {/* Preview area */}
           {photo ? (
             <Image source={{ uri: photo }} style={styles.preview} />
@@ -159,62 +203,58 @@ const Scan = () => {
               onPress={() => setCameraOpen(true)}
             >
               <Ionicons name="camera-outline" size={24} color="#fff" />
-              <Text style={styles.buttonText}>Open Camera</Text>
+              <Text style={styles.buttonText}>Camera</Text>
             </TouchableOpacity>
 
             <TouchableOpacity style={styles.button} onPress={pickImage}>
               <Ionicons name="images-outline" size={24} color="#fff" />
-              <Text style={styles.buttonText}>Upload from Gallery</Text>
+              <Text style={styles.buttonText}>Gallery</Text>
             </TouchableOpacity>
           </View>
 
-          {/* Upload to Cloudinary section */}
+          {/* Scan Button section */}
           {photo && (
-            <View style={{ marginTop: 20, alignItems: "center" }}>
+            <View style={{ marginTop: 20, alignItems: "center", width: '100%' }}>
               <TouchableOpacity
                 style={[
                   styles.button,
                   { width: "80%", justifyContent: "center", opacity: uploading ? 0.7 : 1 },
                 ]}
-                onPress={uploadToCloudinary}
+                onPress={scanIngredients} 
                 disabled={uploading}
               >
-                <Ionicons name="cloud-upload-outline" size={24} color="#fff" />
+                <Ionicons name="scan-outline" size={24} color="#fff" />
                 <Text style={styles.buttonText}>
-                  {uploading ? "Uploading..." : "Upload to Cloudinary"}
+                  {uploading ? "Processing..." : "Scan & Upload"}
                 </Text>
               </TouchableOpacity>
 
-              {/* Progress / status */}
-              {uploading && (
-                <Text style={{ marginTop: 10 }}>
-                  Uploading... {uploadProgress}%
-                </Text>
+              {/* --- CLOUDINARY URL RESULT --- */}
+              {uploadedUrl && (
+                <View style={[styles.resultBox, { backgroundColor: '#e6f7ff' }]}>
+                  <Text style={styles.resultTitle}>Cloudinary Upload:</Text>
+                  <Text style={{color: 'blue', fontSize: 12}}>{uploadedUrl}</Text>
+                </View>
               )}
 
-              {uploadedUrl && (
-                <>
-                  <Text style={{ marginTop: 10, textAlign: "center" }}>
-                    Uploaded URL:
+              {/* --- LOCAL OCR RESULT --- */}
+              {ocrResult && (
+                <View style={styles.resultBox}>
+                  <Text style={styles.resultTitle}>Analysis Results:</Text>
+                  
+                  {/* Just displaying the raw JSON nicely */}
+                  <Text style={styles.resultText}>
+                    {JSON.stringify(ocrResult, null, 2)}
                   </Text>
-                  <Text
-                    style={{
-                      fontSize: 12,
-                      color: "#007AFF",
-                      marginTop: 4,
-                      textAlign: "center",
-                    }}
-                  >
-                    {uploadedUrl}
-                  </Text>
-                </>
+                </View>
               )}
             </View>
           )}
-        </View>
+        </ScrollView>
       )}
     </View>
   );
+
 };
 
 export default Scan;
@@ -222,7 +262,7 @@ export default Scan;
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#fff" },
   center: { flex: 1, justifyContent: "center", alignItems: "center" },
-  content: { flex: 1, justifyContent: "center", alignItems: "center" },
+  content: { flexGrow: 1, justifyContent: "center", alignItems: "center", paddingVertical: 20 }, 
   camera: { flex: 1 },
   cameraControls: { position: "absolute", bottom: 40, alignSelf: "center" },
   captureBtn: { backgroundColor: "#007AFF", padding: 15, borderRadius: 50 },
@@ -242,4 +282,22 @@ const styles = StyleSheet.create({
   },
   buttonText: { color: "#fff", marginLeft: 8, fontWeight: "bold" },
   preview: { width: 300, height: 300, borderRadius: 10, resizeMode: "cover" },
+  
+  resultBox: {
+    marginTop: 15,
+    padding: 15,
+    backgroundColor: '#f0f0f0',
+    borderRadius: 10,
+    width: '90%',
+  },
+  resultTitle: {
+    fontWeight: 'bold',
+    fontSize: 16,
+    marginBottom: 5,
+  },
+  resultText: {
+    fontSize: 12,
+    color: '#333',
+    fontFamily: 'monospace' // Makes JSON look better
+  }
 });
