@@ -35,6 +35,11 @@
     "explanation": "Curing salt for meats that can form potentially carcinogenic nitrosamines when exposed to high heat."
   },
   {
+    "name": "Sodium",
+    "category": "Preservative",
+    "explanation": "Curing salt for meats that can form potentially carcinogenic nitrosamines when exposed to high heat."
+  },
+  {
     "name": "Sodium Nitrate",
     "category": "Preservative",
     "explanation": "Related compound used in processed meats that can also contribute to nitrosamine formation under certain conditions."

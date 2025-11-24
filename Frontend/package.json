@@ -15,7 +15,11 @@
     "axios": "^1.13.2",
     "expo": "~54.0.18",
     "expo-auth-session": "~7.0.9",
+<<<<<<< HEAD
     "expo-camera": "~17.0.9",
+=======
+    "expo-camera": "~17.0.8",
+>>>>>>> 57e462a48aeb2593150d11c745062fc9f305f601
     "expo-constants": "~18.0.10",
     "expo-file-system": "~19.0.19",
     "expo-font": "~14.0.9",
