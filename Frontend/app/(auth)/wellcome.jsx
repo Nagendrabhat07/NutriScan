@@ -13,7 +13,7 @@ export default function WellcomeTailwind() {
   const CARD_MAX_HEIGHT = Math.min(height * 0.82, 1000);
 
   // Logo
-  const LOGO_SIZE = Math.round(Math.min(CARD_MAX_WIDTH * 0.7, CARD_MAX_HEIGHT * 0.45));
+  const LOGO_SIZE = Math.round(Math.min(CARD_MAX_WIDTH * 0.8, CARD_MAX_HEIGHT * 0.50));
 
   return (
     <SafeAreaView

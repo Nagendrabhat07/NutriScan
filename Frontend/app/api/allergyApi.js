@@ -1,8 +1,7 @@
+// Frontend/app/api/allergyApi.js
 import { useAuth } from "@clerk/clerk-expo";
-
-// ⚠️ change this to your PC IP
-const API_URL = "http://192.168.29.109:5000/api/allergies";
-
+// ⚠️ Change this to your PC IP address
+const API_URL = "http://192.168.1.12:5000/api/allergies";
 
 export function useAllergyAPI() {
   const { getToken } = useAuth();

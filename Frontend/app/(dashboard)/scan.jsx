@@ -13,11 +13,8 @@ const UPLOAD_PRESET = "nutriscan_uploads";
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
 
 // --- LOCAL SERVER CONFIG (REPLACE IP IF NEEDED) ---
-<<<<<<< HEAD
 const SERVER_URL = 'http://192.168.1.12:5000/api/ocr'; 
-=======
-const SERVER_URL = 'http://192.168.29.109:5000/api/ocr'; 
->>>>>>> 40ae3213cf8ffbabad707d3010696053a18f942f
+
 
 const Scan = () => {
   const [permission, requestPermission] = useCameraPermissions();

@@ -1,4 +1,3 @@
-
 import * as React from 'react'
 import { Text, TextInput, TouchableOpacity, View, ActivityIndicator, Image } from 'react-native'
 import { useSignUp } from '@clerk/clerk-expo'
@@ -127,122 +126,204 @@ export default function SignUpScreen() {
     }
   }
 
+  // ------------- PENDING VERIFICATION UI -------------
   if (pendingVerification) {
     return (
-      <View style={{ padding: 20 }}>
-        <Text style={{ fontSize: 18, marginBottom: 12 }}>Verify your email</Text>
-
-        {errorMessage !== '' && (
-          <Text style={{ color: 'red', marginBottom: 8 }}>{errorMessage}</Text>
-        )}
-
-        <TextInput
-          value={code}
-          placeholder="Enter your verification code"
-          onChangeText={(c) => setCode(c)}
-          style={{ borderWidth: 1, borderColor: '#ddd', padding: 10, marginBottom: 12, borderRadius: 6 }}
-        />
-
-        <TouchableOpacity
-          onPress={onVerifyPress}
-          disabled={verifyLoading}
-          style={{
-            backgroundColor: verifyLoading ? '#9fc3ff' : '#007AFF',
-            padding: 12,
-            alignItems: 'center',
-            borderRadius: 8,
-          }}
-        >
-          {verifyLoading ? <ActivityIndicator color="#fff" /> : <Text style={{ color: '#fff' }}>Verify</Text>}
-        </TouchableOpacity>
-      </View>
-    )
-  }
-
-  return (
-    <View className="flex-1 bg-white" style={{backgroundColor:Colors.primary}}>
-        <SafeAreaView>
-
-          {/* back button */}
-          <View className="flex-row justify-start">
+      <SafeAreaView
+        className="flex-1 bg-gray-100"
+        style={{ backgroundColor: Colors.primary }}
+      >
+        <View className="flex-1 px-6 pt-6">
+          {/* Back */}
+          <View className="flex-row justify-start mb-4">
             <TouchableOpacity
-            onPress={()=>{navigation.goBack()}}
-              className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
+              onPress={() => setPendingVerification(false)}
+              className="bg-white/90 p-2 rounded-2xl"
             >
-              <ArrowLeftIcon size="20" color="black"/>
+              <ArrowLeftIcon size={20} color="black" />
             </TouchableOpacity>
           </View>
 
-          {/* Photo */}
-          <View className="flex-row justify-center">
-            <Image source={require('../../assets/Logo.png')}
-             style={{width:250,height:250}}
+          <View className="flex-1 bg-white rounded-3xl px-5 py-6 shadow-lg">
+            <Text className="text-xs font-semibold text-gray-400 tracking-[1px]">
+              EMAIL VERIFICATION
+            </Text>
+            <Text className="text-2xl font-bold text-gray-900 mt-1">
+              Verify your email
+            </Text>
+            <Text className="text-xs text-gray-500 mt-2">
+              We&apos;ve sent a 6-digit code to{" "}
+              <Text className="font-semibold">
+                {emailAddress || "your email"}
+              </Text>
+              . Enter it below to finish creating your account.
+            </Text>
+
+            {errorMessage !== '' && (
+              <Text className="text-xs text-red-600 mt-4">
+                {errorMessage}
+              </Text>
+            )}
+
+            <TextInput
+              value={code}
+              placeholder="Enter your verification code"
+              onChangeText={(c) => setCode(c)}
+              keyboardType="number-pad"
+              className="mt-5 px-4 py-3 bg-gray-50 rounded-xl border border-gray-200 text-sm tracking-[4px]"
+            />
+
+            <TouchableOpacity
+              onPress={onVerifyPress}
+              disabled={verifyLoading}
+              className="mt-5 py-3.5 rounded-2xl items-center"
+              style={{
+                backgroundColor: verifyLoading ? '#9fc3ff' : Colors.primary,
+              }}
+            >
+              {verifyLoading ? (
+                <ActivityIndicator color="#fff" />
+              ) : (
+                <Text className="text-white font-semibold text-sm">
+                  Verify & continue
+                </Text>
+              )}
+            </TouchableOpacity>
+
+            <Text className="text-[11px] text-gray-500 mt-4">
+              Didn&apos;t get a code? Check your spam folder or try again in a few minutes.
+            </Text>
+          </View>
+        </View>
+      </SafeAreaView>
+    )
+  }
+
+  // ------------- SIGN UP UI -------------
+  return (
+    <View className="flex-1" style={{ backgroundColor: Colors.primary }}>
+      <SafeAreaView className="flex-1">
+        {/* Top header + back + logo */}
+        <View className="px-6 pt-4">
+          {/* back button */}
+          <View className="flex-row justify-start">
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack()
+              }}
+              className="bg-yellow-400/90 p-2 rounded-tr-2xl rounded-bl-2xl"
+            >
+              <ArrowLeftIcon size={20} color="black" />
+            </TouchableOpacity>
+          </View>
+
+          {/* Logo */}
+          <View className="flex-row justify-center mt-4">
+            <Image
+              source={require('../../assets/Logo.png')}
+              style={{ width: 220, height: 220 }}
+              resizeMode="contain"
             />
           </View>
-      </SafeAreaView>
+        </View>
 
-      {/* sign up form */}
-      <View className="flex-1 bg-white px-8 pt-8"
-        style={{borderTopLeftRadius:50 , borderTopRightRadius:50}}
-      >
-          <View style={{ padding: 20 }}>
-            <Text style={{ fontSize: 22, marginBottom: 16 }} className="text-red-700 font-bold ml-2">Sign up</Text>
+        {/* sign up form card */}
+        <View
+          className="flex-1 bg-white px-6 pt-6"
+          style={{ borderTopLeftRadius: 36, borderTopRightRadius: 36 }}
+        >
+          <View className="mb-2">
+            <Text className="text-xs font-semibold text-gray-400 tracking-[1px] ml-1">
+              CREATE ACCOUNT
+            </Text>
+            <Text className="text-2xl font-bold text-gray-900 mt-1 ml-1">
+              Sign up
+            </Text>
+          </View>
 
-            {errorMessage !== '' && <Text style={{ color: 'red', marginBottom: 12 }}>{errorMessage}</Text>}
+          {errorMessage !== '' && (
+            <Text className="text-xs text-red-600 mb-3 ml-1">
+              {errorMessage}
+            </Text>
+          )}
 
-            {/* Username */}
+          {/* Username */}
+          <View className="mb-3">
+            <Text className="text-[11px] text-gray-500 mb-1 ml-1">
+              Username
+            </Text>
             <TextInput
               autoCapitalize="none"
               value={username}
               placeholder="Choose a username (3-24 chars)"
               onChangeText={(u) => setUsername(u)}
-              style={{ borderWidth: 1, borderColor: '#ddd', marginBottom: 12 }}
-              className="p-5 bg-gray-100 text-gray-700 rounded-2xl"
+              className="p-4 bg-gray-50 text-gray-800 rounded-2xl border border-gray-200 text-sm"
             />
-            
-            {/* Email */}
+          </View>
+
+          {/* Email */}
+          <View className="mb-3">
+            <Text className="text-[11px] text-gray-500 mb-1 ml-1">
+              Email
+            </Text>
             <TextInput
               autoCapitalize="none"
               value={emailAddress}
               placeholder="Enter email"
               onChangeText={(email) => setEmailAddress(email)}
               keyboardType="email-address"
-              style={{ borderWidth: 1, borderColor: '#ddd',  marginBottom: 12,}}
-              className="p-5 bg-gray-100 text-gray-700 rounded-2xl"
+              className="p-4 bg-gray-50 text-gray-800 rounded-2xl border border-gray-200 text-sm"
             />
+          </View>
 
-            {/* Password */}
+          {/* Password */}
+          <View className="mb-4">
+            <Text className="text-[11px] text-gray-500 mb-1 ml-1">
+              Password
+            </Text>
             <TextInput
               value={password}
               placeholder="Enter password"
               secureTextEntry={true}
               onChangeText={(p) => setPassword(p)}
-              style={{ borderWidth: 1, borderColor: '#ddd', marginBottom: 12, }}
-              className="p-5 bg-gray-100 text-gray-700 rounded-2xl"
+              className="p-4 bg-gray-50 text-gray-800 rounded-2xl border border-gray-200 text-sm"
             />
+            <Text className="text-[10px] text-gray-400 mt-1 ml-1">
+              Minimum 6 characters.
+            </Text>
+          </View>
 
-            <TouchableOpacity
-              onPress={onSignUpPress}
-              disabled={loading}
-              style={{
-                backgroundColor: loading ? '#9fc3ff' : '#007AFF',
-                padding: 12,
-                alignItems: 'center',
-                borderRadius: 8,
-                marginBottom: 12,
-              }}
-            >
-              {loading ? <ActivityIndicator color="#fff" /> : <Text style={{ color: '#fff' }}>Continue</Text>}
-            </TouchableOpacity>
+          {/* Continue button */}
+          <TouchableOpacity
+            onPress={onSignUpPress}
+            disabled={loading}
+            className="py-3.5 rounded-2xl items-center mb-3"
+            style={{
+              backgroundColor: loading ? '#9fc3ff' : Colors.primary,
+            }}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text className="text-white font-semibold text-sm">
+                Continue
+              </Text>
+            )}
+          </TouchableOpacity>
 
-            <View style={{ display: 'flex', flexDirection: 'row', gap: 3 }}>
-              <Text>Already have an account?</Text>
-              <Link href="/(auth)/sign-in">
-                <Text style={{ color: '#007AFF' }}>Sign in</Text>
-              </Link>
-            </View>
+          {/* Already have account */}
+          <View className="flex-row items-center mt-2">
+            <Text className="text-sm text-gray-600">
+              Already have an account?{" "}
+            </Text>
+            <Link href="/(auth)/sign-in">
+              <Text className="text-sm font-semibold" style={{ color: Colors.primary }}>
+                Sign in
+              </Text>
+            </Link>
+          </View>
         </View>
-      </View>
+      </SafeAreaView>
     </View>
   )
 }

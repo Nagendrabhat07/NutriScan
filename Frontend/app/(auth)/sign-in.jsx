@@ -1,4 +1,3 @@
-
 import { useSignIn } from '@clerk/clerk-expo'
 import { Link, useNavigation, useRouter } from 'expo-router'
 import { Text, TextInput, TouchableOpacity, View, ActivityIndicator, Image } from 'react-native'
@@ -86,79 +85,136 @@ export default function Page() {
   }
 
   return (
-    <View className="flex-1 bg-white" style={{backgroundColor:Colors.primary}} >
-      <SafeAreaView>
-
+    <View className="flex-1" style={{ backgroundColor: Colors.primary }}>
+      <SafeAreaView className="flex-1">
+        {/* Top header + back + logo */}
+        <View className="px-6 pt-4">
           {/* back button */}
           <View className="flex-row justify-start">
-              <TouchableOpacity
-              onPress={()=>{navigation.goBack()}}
-              className="bg-yellow-400 p-2 rounded-tr-2xl rounded-bl-2xl ml-4"
-              >
-                  <ArrowLeftIcon size="20" color="black" />
-              </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                navigation.goBack()
+              }}
+              className="bg-yellow-400/90 p-2 rounded-tr-2xl rounded-bl-2xl"
+            >
+              <ArrowLeftIcon size={20} color="black" />
+            </TouchableOpacity>
           </View>
 
-          {/* Photo */}
-          <View className="flex-row justify-center">
-            <Image source={require('../../assets/Logo.png')} style={{height:250 , width:250}} />
+          {/* Logo */}
+          <View className="flex-row justify-center mt-4">
+            <Image
+              source={require('../../assets/Logo.png')}
+              style={{ height: 220, width: 220 }}
+              resizeMode="contain"
+            />
           </View>
-      </SafeAreaView>
+        </View>
 
-      {/* Sign in form */}
-      <View className="flex-1 bg-white px-8 pt-8"
-        style={{borderTopLeftRadius:50 , borderTopRightRadius:50}}
-      >
-        <View style={{ padding: 20 }}>
-          <Text style={{ fontSize: 22, marginBottom: 16 }} className="text-red-700 font-bold" >Sign in</Text>
+        {/* Sign in form card */}
+        <View
+          className="flex-1 bg-white px-6 pt-6"
+          style={{ borderTopLeftRadius: 36, borderTopRightRadius: 36 }}
+        >
+          <View className="mb-3">
+            <Text className="text-xs font-semibold text-gray-400 tracking-[1px] ml-1">
+              WELCOME BACK
+            </Text>
+            <Text className="text-2xl font-bold text-gray-900 mt-1 ml-1">
+              Sign in
+            </Text>
+            <Text className="text-[11px] text-gray-500 mt-1 ml-1">
+              Enter your credentials to access your NutriScan account.
+            </Text>
+          </View>
 
           {errorMessage !== '' && (
-            <Text style={{ color: 'red', marginBottom: 12 }}>{errorMessage}</Text>
+            <Text className="text-xs text-red-600 mb-3 ml-1">
+              {errorMessage}
+            </Text>
           )}
 
-        <TextInput
-          autoCapitalize="none"
-          value={emailAddress}
-          placeholder="Enter email"
-          onChangeText={(email) => setEmailAddress(email)}
-          keyboardType="email-address"
-          style={{ borderWidth: 1, borderColor: '#ddd', marginBottom: 12,  }}
-          className="p-5 bg-gray-100 text-gray-700 rounded-2xl"
-        />
-        <TextInput
-          value={password}
-          placeholder="Enter password"
-          secureTextEntry={true}
-          onChangeText={(p) => setPassword(p)}
-          style={{ borderWidth: 1, borderColor: '#ddd',  marginBottom: 12, }}
-          className="p-5 bg-gray-100 text-gray-700 rounded-2xl"
-        />
+          {/* Email */}
+          <View className="mb-3">
+            <Text className="text-[11px] text-gray-500 mb-1 ml-1">
+              Email
+            </Text>
+            <TextInput
+              autoCapitalize="none"
+              value={emailAddress}
+              placeholder="Enter email"
+              onChangeText={(email) => setEmailAddress(email)}
+              keyboardType="email-address"
+              className="p-4 bg-gray-50 text-gray-800 rounded-2xl border border-gray-200 text-sm"
+            />
+          </View>
 
-        <TouchableOpacity
-          onPress={onSignInPress}
-          disabled={loading}
-          style={{
-            backgroundColor: loading ? '#9fc3ff' : '#007AFF',
-            padding: 12,
-            alignItems: 'center',
-            borderRadius: 8,
-            marginBottom: 12,
-          }}
-        >
-          {loading ? <ActivityIndicator color="#fff" /> : <Text style={{ color: '#fff' }}>Continue</Text>}
-        </TouchableOpacity>
-          <View style={{ marginTop: 20 }}>
-          <GoogleSignIn />
-        </View>
-        <View style={{ display: 'flex', flexDirection: 'row', gap: 8 }}>
-          <Link href="/(auth)/sign-up">
-            <Text style={{ color: '#007AFF' }}>Sign up</Text>
-          </Link>
-        </View>
+          {/* Password */}
+          <View className="mb-2">
+            <Text className="text-[11px] text-gray-500 mb-1 ml-1">
+              Password
+            </Text>
+            <TextInput
+              value={password}
+              placeholder="Enter password"
+              secureTextEntry={true}
+              onChangeText={(p) => setPassword(p)}
+              className="p-4 bg-gray-50 text-gray-800 rounded-2xl border border-gray-200 text-sm"
+            />
+          </View>
 
-        
-    </View>
-      </View>
+          {/* (Optional) Forgot password text */}
+          <View className="items-end mb-4">
+            <Text className="text-[11px] text-gray-500">
+              Forgot password? {/* later you can make this a link */}
+            </Text>
+          </View>
+
+          {/* Continue button */}
+          <TouchableOpacity
+            onPress={onSignInPress}
+            disabled={loading}
+            className="py-3.5 rounded-2xl items-center mb-4"
+            style={{
+              backgroundColor: loading ? '#9fc3ff' : Colors.primary,
+            }}
+          >
+            {loading ? (
+              <ActivityIndicator color="#fff" />
+            ) : (
+              <Text className="text-white font-semibold text-sm">
+                Continue
+              </Text>
+            )}
+          </TouchableOpacity>
+
+          {/* Or divider */}
+          <View className="flex-row items-center my-2">
+            <View className="flex-1 h-px bg-gray-200" />
+            <Text className="mx-2 text-[11px] text-gray-400">
+              OR CONTINUE WITH
+            </Text>
+            <View className="flex-1 h-px bg-gray-200" />
+          </View>
+
+          {/* Google Sign In */}
+          <View className="mt-3">
+            <GoogleSignIn />
+          </View>
+
+          {/* Bottom - Sign up link */}
+          <View className="flex-row items-center mt-6">
+            <Text className="text-sm text-gray-600">
+              Don&apos;t have an account?{" "}
+            </Text>
+            <Link href="/(auth)/sign-up">
+              <Text className="text-sm font-semibold" style={{ color: Colors.primary }}>
+                Sign up
+              </Text>
+            </Link>
+          </View>
+        </View>
+      </SafeAreaView>
     </View>
   )
 }

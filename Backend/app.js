@@ -1,39 +1,45 @@
-const express = require('express');
-const multer = require('multer');
-const { createWorker } = require('tesseract.js');
-const cors = require('cors');
+require("dotenv").config();
 
-const fs = require('fs');
+const express = require("express");
+const multer = require("multer");
+const { createWorker } = require("tesseract.js");
+const cors = require("cors");
+const fs = require("fs");
+
 const connectDB = require("./config/db");
 const allergyRoutes = require("./src/routes/allergy.routes");
-
-// 1. Load your ingredients database
-// Make sure ingredients.json is in the same folder!
-const ingredientDB = require('./uploads/ingredients.json');
-
-
+const recommendationsRouter = require("./routes/recommendations");
 const { clerkMiddleware, getAuth } = require("./src/middleware/clerk.middleware");
 
-require("dotenv").config();
+// 1. Load your ingredients database
+// Make sure ingredients.json is in the correct folder
+const ingredientDB = require("./uploads/ingredients.json");
+
+// 2. Initialize app
 const app = express();
-app.use(cors()); 
+
+// 3. Global middlewares
+app.use(cors()); // Allow frontend / phone to connect
 app.use(express.json());
 
-// connect mongoDB
+// 4. Connect MongoDB
 connectDB();
 
-// Clerk middleware before routes
+// 5. Clerk middleware before protected routes
 app.use(clerkMiddleware());
 
-// Public root route
+// 6. Public root route
 app.get("/", (req, res) => {
   res.send("NutriScan Backend Running");
 });
 
-// Allergy API (protected by getAuth inside controller)
+// 7. Recommendations route (uses Clerk auth inside router)
+app.use("/api/recommendations", recommendationsRouter);
+
+// 8. Allergy API routes (protected by Clerk via middleware or controller)
 app.use("/api/allergies", allergyRoutes);
 
-// protected test route
+// 9. Protected test route
 app.get("/protected", (req, res) => {
   const auth = getAuth(req);
 
@@ -47,60 +53,59 @@ app.get("/protected", (req, res) => {
   });
 });
 
-app.use(cors()); // Allow your phone to connect
-
-// 2. Configure Multer to hold the image in memory (RAM) temporarily
+// 10. Multer: hold image in memory
 const storage = multer.memoryStorage();
 const upload = multer({ storage: storage });
 
+// 11. OCR endpoint
+let worker; // Tesseract worker
 
-// THE API ENDPOINT
-app.post('/api/ocr', upload.single('file'), async (req, res) => {
+app.post("/api/ocr", upload.single("file"), async (req, res) => {
   if (!worker) {
-    return res.status(503).json({ error: 'OCR engine not ready' });
+    return res.status(503).json({ error: "OCR engine not ready" });
   }
   if (!req.file) {
     console.log("No file received");
-    return res.status(400).json({ error: 'No file uploaded' });
+    return res.status(400).json({ error: "No file uploaded" });
   }
   try {
-    const { data: { text } } = await worker.recognize(req.file.buffer);
+    const {
+      data: { text },
+    } = await worker.recognize(req.file.buffer);
     const results = analyzeText(text);
-    res.json({ status: 'success', data: results });
+    res.json({ status: "success", data: results });
   } catch (error) {
-    console.error('OCR error:', error);
-    res.status(500).json({ error: 'Analysis failed on server.' });
+    console.error("OCR error:", error);
+    res.status(500).json({ error: "Analysis failed on server." });
   }
 });
 
+// 12. Start server
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
-// 3. Initialize Tesseract (OCR Engine)
-let worker;
-
+// 13. Initialize Tesseract worker
 (async () => {
   console.log("Initializing Tesseract...");
-  // In the new version, 'eng' is passed directly, and we await the result
-  worker = await createWorker('eng'); 
-  console.log('✅ Tesseract worker ready!');
+  worker = await createWorker("eng");
+  console.log("✅ Tesseract worker ready!");
 })();
 
-// 4. The Analysis Logic
+// 14. Ingredient analysis logic
 function analyzeText(text) {
   const extractedText = text.toLowerCase();
   const flagged = [];
 
   console.log("Analyzing text...");
 
-  ingredientDB.forEach(ingredient => {
-    // SAFETY CHECK: Only proceed if ingredient.name exists!
-    if (ingredient.name && extractedText.includes(ingredient.name.toLowerCase())) {
+  ingredientDB.forEach((ingredient) => {
+    if (
+      ingredient.name &&
+      extractedText.includes(ingredient.name.toLowerCase())
+    ) {
       flagged.push(ingredient);
     }
   });
 
   return { extractedText: text, flaggedIngredients: flagged };
 }
-
-

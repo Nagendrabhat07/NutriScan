@@ -1,14 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Dimensions,
-  ActivityIndicator,
-  ScrollView,
-  StyleSheet,
-} from "react-native";
+import {View,Text,TextInput,TouchableOpacity,Dimensions,ActivityIndicator,ScrollView,StyleSheet,} from"react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useUser, useSignOut } from "@clerk/clerk-expo";
 import { useNavigation } from "expo-router";
@@ -125,7 +116,9 @@ export default function ProfileCombined() {
     setStatusMsg("");
 
     if (!usernameIsValid(username)) {
-      setStatusMsg("Invalid username — use 3-24 lowercase letters/numbers or . _ -");
+      setStatusMsg(
+        "Invalid username — use 3-24 lowercase letters/numbers or . _ -"
+      );
       return;
     }
 
@@ -146,7 +139,9 @@ export default function ProfileCombined() {
   const saveBio = async () => {
     setSavingBio(true);
     try {
-      await user.update({ publicMetadata: { ...(user.publicMetadata || {}), bio } });
+      await user.update({
+        publicMetadata: { ...(user.publicMetadata || {}), bio },
+      });
       setStatusMsg("Bio updated");
     } catch {
       setStatusMsg("Failed to save bio");
@@ -200,25 +195,49 @@ export default function ProfileCombined() {
   const { width } = Dimensions.get("window");
 
   return (
-    <SafeAreaView style={{ backgroundColor: Colors.primary }}>
-      <ScrollView contentContainerStyle={{ paddingBottom: 40 }}>
+    <SafeAreaView
+      style={{ backgroundColor: Colors.primary }}
+      className="flex-1"
+    >
+      {/* Top header background */}
+      <View className="px-6 pt-6 pb-4">
+        <Text className="text-2xl font-bold text-gray-100 tracking-wide">
+          PROFILE
+        </Text>
+        <Text className="text-xl font-medium text-white mt-1">
+          Account & Allergies
+        </Text>
+        <Text className="text-[11px] text-gray-100 mt-1 opacity-80">
+          Keep your details and allergy list updated for safer scan results.
+        </Text>
+      </View>
+
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: 40 }}
+        className="bg-gray-100"
+      >
         {/* Card */}
-        <View className="px-6 mt-8">
-          <View className="bg-white rounded-2xl p-5" style={{ elevation: 4 }}>
+        <View className="px-6 mt-2">
+          <View className="bg-white rounded-3xl p-5 shadow-md">
             {/* Avatar + basic info */}
             <View className="flex-row items-center">
-              <View className="w-20 h-20 bg-gray-100 rounded-full items-center justify-center mr-4">
-                <Text className="text-xl font-bold text-gray-700">
-                  {user?.firstName?.[0] || username?.[0]?.toUpperCase() || "U"}
+              <View className="w-16 h-16 bg-indigo-50 rounded-full items-center justify-center mr-4 border border-indigo-100">
+                <Text className="text-xl font-bold text-indigo-700">
+                  {user?.firstName?.[0] ||
+                    username?.[0]?.toUpperCase() ||
+                    "U"}
                 </Text>
               </View>
 
               <View style={{ flex: 1 }}>
-                <Text className="text-lg font-bold text-gray-900">
+                <Text className="text-lg font-bold text-gray-900" numberOfLines={1}>
                   {user?.fullName || username || "User"}
                 </Text>
 
-                <Text className="text-sm text-gray-500 mt-1">
+                <Text
+                  className="text-xs text-gray-500 mt-1"
+                  numberOfLines={2}
+                >
                   {user?.primaryEmailAddress?.emailAddress ||
                     user?.emailAddresses?.[0]?.emailAddress ||
                     ""}
@@ -228,28 +247,38 @@ export default function ProfileCombined() {
               <SignOutButton />
             </View>
 
+            {/* Divider */}
+            <View className="h-px bg-gray-100 mt-5 mb-4" />
+
             {/* Username */}
-            <View className="mt-6">
-              <Text className="text-sm text-gray-600 mb-2">Username</Text>
+            <View className="mt-2">
+              <Text className="text-xs font-semibold text-gray-500 mb-1">
+                USERNAME
+              </Text>
               {!editing ? (
-                <View className="flex-row items-center justify-between">
-                  <Text className="text-base text-gray-800">
+                <View className="flex-row items-center justify-between bg-gray-50 rounded-xl px-3 py-2">
+                  <Text
+                    className="text-base text-gray-800"
+                    numberOfLines={1}
+                  >
                     {username || "—"}
                   </Text>
                   <TouchableOpacity
                     onPress={() => setEditing(true)}
-                    className="px-3 py-1 bg-green-100 rounded-md"
+                    className="px-3 py-1 bg-emerald-50 rounded-md"
                   >
-                    <Text className="text-green-700 font-semibold">Edit</Text>
+                    <Text className="text-[12px] text-emerald-700 font-semibold">
+                      Edit
+                    </Text>
                   </TouchableOpacity>
                 </View>
               ) : (
-                <View>
+                <View className="bg-gray-50 rounded-xl px-3 py-3">
                   <TextInput
                     value={username}
                     onChangeText={setUsername}
                     autoCapitalize="none"
-                    className="p-3 bg-gray-100 rounded-md"
+                    className="px-3 py-2 bg-white rounded-md border border-gray-200"
                     placeholder="choose-a-username"
                   />
                   <View className="flex-row items-center justify-end mt-3">
@@ -258,38 +287,42 @@ export default function ProfileCombined() {
                         setEditing(false);
                         setUsername(initialHandle);
                       }}
-                      className="px-4 py-2 mr-3"
+                      className="px-4 py-2 mr-2"
                     >
-                      <Text className="text-gray-600">Cancel</Text>
+                      <Text className="text-gray-500 text-sm">Cancel</Text>
                     </TouchableOpacity>
                     <TouchableOpacity
                       onPress={saveUsername}
                       disabled={savingUser}
-                      className="px-4 py-2 bg-green-600 rounded-md"
+                      className="px-4 py-2 bg-emerald-600 rounded-md"
                       style={{ opacity: savingUser ? 0.6 : 1 }}
                     >
                       {savingUser ? (
                         <ActivityIndicator color="#fff" />
                       ) : (
-                        <Text className="text-white font-semibold">Save</Text>
+                        <Text className="text-white text-sm font-semibold">
+                          Save
+                        </Text>
                       )}
                     </TouchableOpacity>
                   </View>
                 </View>
               )}
               {statusMsg ? (
-                <Text className="text-sm text-red-600 mt-2">{statusMsg}</Text>
+                <Text className="text-xs text-red-600 mt-2">{statusMsg}</Text>
               ) : null}
             </View>
 
             {/* Bio */}
             <View className="mt-6">
-              <Text className="text-sm text-gray-600 mb-2">Bio</Text>
+              <Text className="text-xs font-semibold text-gray-500 mb-1">
+                BIO
+              </Text>
               <TextInput
                 value={bio}
                 onChangeText={setBio}
                 placeholder="A short bio (optional)"
-                className="p-3 bg-gray-100 rounded-md"
+                className="p-3 bg-gray-50 rounded-xl border border-gray-200 text-sm"
                 multiline
                 numberOfLines={3}
               />
@@ -298,9 +331,9 @@ export default function ProfileCombined() {
                   onPress={() => {
                     setBio(user?.publicMetadata?.bio || "");
                   }}
-                  className="px-4 py-2 mr-3"
+                  className="px-4 py-2 mr-2"
                 >
-                  <Text className="text-gray-600">Reset</Text>
+                  <Text className="text-gray-500 text-sm">Reset</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   onPress={saveBio}
@@ -311,17 +344,21 @@ export default function ProfileCombined() {
                   {savingBio ? (
                     <ActivityIndicator color="#fff" />
                   ) : (
-                    <Text className="text-white font-semibold">Save Bio</Text>
+                    <Text className="text-white text-sm font-semibold">
+                      Save Bio
+                    </Text>
                   )}
                 </TouchableOpacity>
               </View>
             </View>
 
             {/* Allergens */}
-            <View className="mt-6">
-              <Text className="text-lg font-semibold">Allergens</Text>
-              <Text className="text-sm text-gray-500 mt-1 mb-3">
-                Manage your food allergens so scans can surface warnings.
+            <View className="mt-7">
+              <Text className="text-xs font-semibold text-gray-500">
+                ALLERGENS
+              </Text>
+              <Text className="text-[11px] text-gray-500 mt-1 mb-3">
+                These are used to warn you during label scans.
               </Text>
 
               <View style={{ flexDirection: "row", flexWrap: "wrap" }}>
@@ -329,17 +366,16 @@ export default function ProfileCombined() {
                   allergens.map((a, index) => (
                     <View
                       key={a._id || `${a.name}-${index}`}
-                      className="bg-red-100 px-3 py-1 rounded-full mr-2 mb-2"
-                      style={{ flexDirection: "row", alignItems: "center" }}
+                      className="bg-red-50 px-3 py-1.5 rounded-full mr-2 mb-2 flex-row items-center border border-red-100"
                     >
-                      <Text className="text-sm text-red-700">
+                      <Text className="text-[12px] text-red-700">
                         {a.name || "Unknown"}
                       </Text>
                       <TouchableOpacity
                         onPress={() => removeAllergen(a)}
                         className="ml-2"
                       >
-                        <Text className="text-sm text-red-400">✕</Text>
+                        <Text className="text-[12px] text-red-400">✕</Text>
                       </TouchableOpacity>
                     </View>
                   ))
@@ -355,7 +391,7 @@ export default function ProfileCombined() {
                 placeholder="Type an allergen (e.g. Peanuts)"
                 value={inputAllergen}
                 onChangeText={setInputAllergen}
-                className="p-3 bg-gray-100 rounded-md mt-3"
+                className="p-3 bg-gray-50 rounded-xl mt-3 border border-gray-200 text-sm"
                 autoCapitalize="words"
                 onSubmitEditing={() => addAllergen(inputAllergen)}
               />
@@ -366,9 +402,11 @@ export default function ProfileCombined() {
                     <TouchableOpacity
                       key={s}
                       onPress={() => addAllergen(s)}
-                      className="bg-green-100 px-3 py-1 rounded-full mr-2 mb-2"
+                      className="bg-emerald-50 px-3 py-1.5 rounded-full mr-2 mb-2 border border-emerald-100"
                     >
-                      <Text className="text-sm text-green-700">{s}</Text>
+                      <Text className="text-[12px] text-emerald-700">
+                        {s}
+                      </Text>
                     </TouchableOpacity>
                   ))}
                 </View>
@@ -377,9 +415,9 @@ export default function ProfileCombined() {
               <View style={{ flexDirection: "row", marginTop: 12 }}>
                 <TouchableOpacity
                   onPress={() => addAllergen(inputAllergen)}
-                  className="bg-green-600 px-4 py-2 rounded-md mr-3"
+                  className="bg-emerald-600 px-4 py-2 rounded-md mr-3"
                 >
-                  <Text className="text-white font-semibold">
+                  <Text className="text-white text-sm font-semibold">
                     {inputAllergen ? "Add" : "Add custom"}
                   </Text>
                 </TouchableOpacity>
@@ -390,14 +428,14 @@ export default function ProfileCombined() {
                   }}
                   className="bg-gray-200 px-4 py-2 rounded-md"
                 >
-                  <Text className="text-gray-700">
+                  <Text className="text-xs text-gray-700">
                     {suggestionsVisible ? "Hide suggestions" : "Show suggestions"}
                   </Text>
                 </TouchableOpacity>
               </View>
 
               {statusAllergens ? (
-                <Text className="text-sm text-gray-600 mt-3">
+                <Text className="text-xs text-gray-600 mt-3">
                   {statusAllergens}
                 </Text>
               ) : null}
