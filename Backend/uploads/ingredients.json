@@ -93,5 +93,45 @@
     "name": "Aluminum Additives",
     "category": "Leavening/Processing Aid",
     "explanation": "Aluminum‑based compounds in baking powder and processed cheese that raise concerns about neurotoxicity and long‑term safety at high exposure."
+  },
+  {
+    "name": "Palm Oil",
+    "category": "Fat/Oli",
+    "explanation": "High in saturated fat. Not good for heart health when eaten frequently."
+  },
+  {
+    "name": "Palmolein Oil",
+    "category": "Unhealthy Fat",
+    "explanation": "High in saturated fats (approx 50%), which can raise LDL (bad) cholesterol and increase heart disease risk."
+  },
+  {
+    "name": "Palm Oil",
+    "category": "Unhealthy Fat",
+    "explanation": "High in saturated fats and often linked to inflammation and higher cholesterol levels."
+  },
+  {
+    "name": "Maltodextrin",
+    "category": "Processed Carbohydrate",
+    "explanation": "A highly processed filler with a Glycemic Index higher than table sugar, causing rapid blood sugar spikes."
+  },
+  {
+    "name": "Hydrolysed Vegetable Protein",
+    "category": "Hidden MSG",
+    "explanation": "Chemically broken down protein that creates free glutamate (similar to MSG). Can trigger headaches or thirst in sensitive individuals."
+  },
+  {
+    "name": "627",
+    "category": "Flavour Enhancer",
+    "explanation": "Disodium Guanylate. High in sodium and metabolizes into purines. Not recommended for people with gout or kidney stones."
+  },
+  {
+    "name": "631",
+    "category": "Flavour Enhancer",
+    "explanation": "Disodium Inosinate. Often used with MSG. High sodium content and can trigger allergic-type reactions in sensitive people."
+  },
+  {
+    "name": "Sugar",
+    "category": "Added Sugar",
+    "explanation": "Empty calories that contribute to inflammation, weight gain, and insulin resistance."
   }
 ]

@@ -12,15 +12,14 @@ import { useAuth } from "@clerk/clerk-expo";
 const CLOUD_NAME = "dg9nqs3ng";
 const UPLOAD_PRESET = "nutriscan_uploads";
 const CLOUDINARY_URL = `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`;
-<<<<<<< HEAD
 
+const myIp = process.env.EXPO_PUBLIC_MY_IP_ADDRESS;
 // --- LOCAL SERVER CONFIG (REPLACE IP IF NEEDED) ---
-const SERVER_URL = 'http://192.168.1.12:5000/api/ocr'; 
+const SERVER_URL = `http://${myIp}:5000/api/ocr`; 
 
-=======
-// REPLACE WITH YOUR IP
-const SERVER_URL = 'http://192.168.29.109:5000/api/ocr';
->>>>>>> 57e462a48aeb2593150d11c745062fc9f305f601
+ 
+
+ 
 
 const Scan = () => {
   const [permission, requestPermission] = useCameraPermissions();

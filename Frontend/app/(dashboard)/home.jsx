@@ -3,7 +3,8 @@ import {View,Text,TouchableOpacity,ScrollView,Image,ActivityIndicator,} from "re
 import { useUser, useAuth } from "@clerk/clerk-expo";
 import { useNavigation } from "@react-navigation/native";
 
-const API_BASE_URL = "http://192.168.1.12:5000/api"; // change this Prateek
+const myIp = process.env.EXPO_PUBLIC_MY_IP_ADDRESS;
+const API_BASE_URL = `http://${myIp}:5000/api`; // change this Prateek
 
 export default function HomeScreen() {
   const { user } = useUser();

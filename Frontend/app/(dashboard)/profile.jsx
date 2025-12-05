@@ -354,7 +354,7 @@ export default function ProfileCombined() {
 
             {/* Allergens */}
             <View className="mt-7">
-              <Text className="text-xs font-semibold text-gray-500">
+              <Text className="text-lg font-semibold text-red-500">
                 ALLERGENS
               </Text>
               <Text className="text-[11px] text-gray-500 mt-1 mb-3">

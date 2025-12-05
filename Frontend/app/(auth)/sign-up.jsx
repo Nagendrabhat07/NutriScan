@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Text, TextInput, TouchableOpacity, View, ActivityIndicator, Image } from 'react-native'
+import { Text, TextInput, TouchableOpacity, View, ActivityIndicator, Image, KeyboardAvoidingView } from 'react-native'
 import { useSignUp } from '@clerk/clerk-expo'
 import { Link, useNavigation, useRouter } from 'expo-router'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -201,8 +201,10 @@ export default function SignUpScreen() {
 
   // ------------- SIGN UP UI -------------
   return (
+    
     <View className="flex-1" style={{ backgroundColor: Colors.primary }}>
       <SafeAreaView className="flex-1">
+        <KeyboardAvoidingView className="flex-1" >
         {/* Top header + back + logo */}
         <View className="px-6 pt-4">
           {/* back button */}
@@ -323,7 +325,9 @@ export default function SignUpScreen() {
             </Link>
           </View>
         </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </View>
+  
   )
 }
