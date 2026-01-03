@@ -33,6 +33,24 @@ NutriScan simplifies food safety analysis by:
 
 ---
 
+## 📸 Screenshots
+
+<p align="center">
+  <img src="/Screenshots/Wellcome.jpeg" width="200" />
+  <img src="/Screenshots/SignIn.jpeg" width="200" />
+  <img src="/Screenshots/SignUp.jpeg" width="200" />
+  <img src="/Screenshots/Home.jpeg" width="200" />
+  <img src="/Screenshots/Home2.png" width="200" />
+  <img src="/Screenshots/Scan.jpeg" width="200" />
+  <img src="/Screenshots/Scan1.png" width="200" />
+  <img src="/Screenshots/Result1.png" width="200" />
+  <img src="/Screenshots/Result2.png" width="200" />
+  <img src="/Screenshots/Result3.png" width="200" />
+  <img src="/Screenshots/History.png" width="200" />
+  <img src="/Screenshots/Profile.png" width="200" />
+</p>
+
+---
 ## 🚀 Key Features
 
 - 📸 **Ingredient Scanning**
