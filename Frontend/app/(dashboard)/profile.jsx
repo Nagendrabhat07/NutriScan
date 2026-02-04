@@ -201,7 +201,7 @@ export default function ProfileCombined() {
     >
       {/* Top header background */}
       <View className="px-6 pt-6 pb-4">
-        <Text className="text-2xl font-bold text-gray-100 tracking-wide">
+        <Text className="text-2xl font-bold text-yellow-300 tracking-wide">
           PROFILE
         </Text>
         <Text className="text-xl font-medium text-white mt-1">
@@ -214,10 +214,10 @@ export default function ProfileCombined() {
 
       <ScrollView
         contentContainerStyle={{ paddingBottom: 40 }}
-        className="bg-gray-100"
+        className="bg-gray-100 "
       >
         {/* Card */}
-        <View className="px-6 mt-2">
+        <View className="px-6 mt-4">
           <View className="bg-white rounded-3xl p-5 shadow-md">
             {/* Avatar + basic info */}
             <View className="flex-row items-center">

@@ -222,7 +222,7 @@ export default function SignUpScreen() {
           {/* Logo */}
           <View className="flex-row justify-center mt-4">
             <Image
-              source={require('../../assets/Logo.png')}
+              source={require('../../assets/tNew-logo.png')}
               style={{ width: 220, height: 220 }}
               resizeMode="contain"
             />

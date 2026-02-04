@@ -104,7 +104,7 @@ export default function Page() {
           {/* Logo */}
           <View className="flex-row justify-center mt-4">
             <Image
-              source={require('../../assets/Logo.png')}
+              source={require('../../assets/tNew-logo.png')}
               style={{ height: 220, width: 220 }}
               resizeMode="contain"
             />

@@ -9,6 +9,9 @@ const router = express.Router();
 const OFF_SEARCH_URL =
   "https://world.openfoodfacts.org/cgi/search.pl?search_terms=healthy&search_simple=1&action=process&json=1&page_size=30";
 
+// remove these religious labels
+const BLOCKED_RELIGIOUS_LABELS = ["kosher", "halal"];
+
 router.get("/healthy", requireAuth(), async (req, res) => {
   try {
     const userId = req.auth.userId; // from Clerk
@@ -37,13 +40,47 @@ router.get("/healthy", requireAuth(), async (req, res) => {
 
       const ingredientsText = p.ingredients_text || "";
 
-      // cleaner description
+      // small description
       const description =
         p.generic_name ||
         (p.brands ? `From ${p.brands}` : "Safe option based on your allergies.");
 
       if (!imageUrl) continue;
 
+      // ---------- EXTRA FIELDS ----------
+
+      // category (take 1st category to keep short)
+      let category = null;
+      if (p.categories && typeof p.categories === "string") {
+        category = p.categories.split(",")[0].trim();
+      } else if (Array.isArray(p.categories_tags) && p.categories_tags.length > 0) {
+        category = p.categories_tags[0]
+          .replace(/^en:/, "")
+          .replace(/-/g, " ");
+      }
+
+      // NutriScore grade (a, b, c...)
+      const nutriScore = p.nutriscore_grade || null;
+
+      // labels (organic, vegan, etc)
+      let labelsRaw = [];
+      if (Array.isArray(p.labels_tags) && p.labels_tags.length > 0) {
+        labelsRaw = p.labels_tags.map((tag) =>
+          tag.replace(/^en:/, "").replace(/-/g, " ")
+        );
+      } else if (typeof p.labels === "string" && p.labels.trim().length > 0) {
+        labelsRaw = p.labels
+          .split(",")
+          .map((l) => l.trim())
+          .filter(Boolean);
+      }
+
+      // remove religious labels: kosher / halal
+      const labels = labelsRaw.filter(
+        (l) => !BLOCKED_RELIGIOUS_LABELS.includes(l.toLowerCase())
+      );
+
+      // ---------- ALLERGY CHECK ----------
       let hasAllergy = false;
       for (const allergy of allergyNames) {
         if (
@@ -62,6 +99,11 @@ router.get("/healthy", requireAuth(), async (req, res) => {
           imageUrl,
           description,
           ingredientsText,
+
+          // new stuff for frontend
+          category,   // string | null
+          nutriScore, // string | null ("a"/"b"/...)
+          labels,     // array of strings
         });
       }
     }

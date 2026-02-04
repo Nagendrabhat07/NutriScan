@@ -13,7 +13,7 @@ export default function WellcomeTailwind() {
   const CARD_MAX_HEIGHT = Math.min(height * 0.82, 1000);
 
   // Logo
-  const LOGO_SIZE = Math.round(Math.min(CARD_MAX_WIDTH * 0.8, CARD_MAX_HEIGHT * 0.50));
+  const LOGO_SIZE = Math.round(Math.min(CARD_MAX_WIDTH * 0.9, CARD_MAX_HEIGHT * 0.60));
 
   return (
     <SafeAreaView
@@ -54,7 +54,7 @@ export default function WellcomeTailwind() {
             {/* Logo */}
             <View className="items-center my-3">
               <Image
-                source={require("../../assets/Logo.png")}
+                source={require("../../assets/new-logo.jpeg")}
                 style={{ width: LOGO_SIZE, height: LOGO_SIZE }}
                 resizeMode="contain"
                 className="mb-3"
